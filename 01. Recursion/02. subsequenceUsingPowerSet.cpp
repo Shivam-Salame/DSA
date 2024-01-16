@@ -23,9 +23,7 @@ vector<string> allPossibleStrings( string s ) {
 
 int main()
 {   
-    // eg: "abc"
-    string s  = "abc";
-    // cin >> s;
+    string s  = "abc";    
     vector<string> ans = allPossibleStrings( s );
     for( auto it: ans ){
         cout << it << " "; 

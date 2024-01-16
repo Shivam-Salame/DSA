@@ -1,0 +1,100 @@
+Gke Standard cluster:
+
+Kubernetes Enigine > Clusters > create > standard
+Cluster basics:
+  name:
+  Location type:
+    Regional:
+      asia-south1
+  Select:
+    Specific default node locations:
+      asia-south1-a
+      asia-south1-b
+      asia-south1-c
+  Control Plane Version:
+    Release channel:
+    	Regular channel	
+    Version:
+    	1.27.7-gke.1121000
+
+Node pools:
+  default-pool:
+      name:
+      size: 
+        number of nodes ( per zone ):
+          1 
+      check> Enable cluster autoscaler
+
+        minimum no. of nodes per zone:
+          1
+        maximum no. of nodes per zone:
+          30
+    Nodes:
+      image type:
+        ubuntu with containerd
+      machine configuration:
+        e2-custom-8-32768
+      Boot disk type:
+        Standard persistent disk
+      Boot disk size:
+        100
+    Security:
+      check > enable workload identity
+      check > enable shielded gke
+      check > configuration auditing
+
+Cluster:
+  Automation:
+    Autoscaling:
+          check > Enable vertical pod autoscaling
+          check > Enable node auto-provisioning:
+            Limits:
+              Resource type 1:
+                minimum: 4
+                maximum: 32
+              Resource type 2:
+                minimum: 8
+                maximum: 98
+  Networking:
+    Network shared with me from host project ( nw-ril-retail-prod-non-dmz-vpc ):
+      network:
+      subnet: 
+    IPv4 network access: 
+      Private cluster:
+        uncheck > Access control plane using its external IP address
+        control plane ip range:
+          10.166.235.176/28 ( invalid )
+    Advance networking options:
+      check > Enable Control plane global access
+      select > Pod secondary CIDR range:
+
+      Maximum pods per node:
+        110
+      Services secondary CIDR range:
+
+      check > Enable Dataplane v2
+
+    Authorized networks:
+      New authorized networks:
+        name: 
+          name of the subnet in which we want to create bastion node
+        network: 
+          <ip range for bastion node > 
+    Dns Provider:
+      check >  Enable NodeLocal DnsCache
+
+Click - Create:  
+
+------------------------
+cloud shell command:
+
+gcloud beta container --project "sr-project-dev-jioworks" clusters create "test-gke" --no-enable-basic-auth --cluster-version "1.28.3-gke.1286000" --release-channel "regular" --machine-type "e2-custom-4-8192" --image-type "UBUNTU_CONTAINERD" --disk-type "pd-standard" --disk-size "100" --metadata disable-legacy-endpoints=true --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "1" --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM --enable-private-nodes --enable-private-endpoint --master-ipv4-cidr "10.166.235.176/28" --enable-ip-alias --network "projects/nw-ril-non-prod-host-pr/global/networks/nw-ril-retail-non-prod-non-dmz-vpc" --subnetwork "projects/nw-ril-non-prod-host-pr/regions/asia-south1/subnetworks/nw-ril-retail-non-prod-non-dmz-gke-subnet-01" --cluster-secondary-range-name "nw-ril-retail-non-prod-non-dmz-gke-pod-01" --services-secondary-range-name "nw-ril-retail-non-prod-non-dmz-gke-services-01" --no-enable-intra-node-visibility --default-max-pods-per-node "110" --security-posture=standard --workload-vulnerability-scanning=disabled --enable-dataplane-v2 --enable-master-authorized-networks --master-authorized-networks 10.166.163.0/24 --addons HorizontalPodAutoscaling,HttpLoadBalancing,NodeLocalDNS,GcePersistentDiskCsiDriver --enable-autoupgrade --enable-autorepair --max-surge-upgrade 1 --max-unavailable-upgrade 0 --binauthz-evaluation-mode=DISABLED --enable-autoprovisioning --min-cpu 4 --max-cpu 8 --min-memory 8 --max-memory 16 --enable-autoprovisioning-autorepair --enable-autoprovisioning-autoupgrade --autoprovisioning-max-surge-upgrade 1 --autoprovisioning-max-unavailable-upgrade 0 --enable-managed-prometheus --enable-vertical-pod-autoscaling --workload-pool "sr-project-dev-jioworks.svc.id.goog" --enable-shielded-nodes --node-locations "asia-south1-a","asia-south1-b","asia-south1-c"
+
+------------------------
+Create a vm ( bastion-node ):
+sudo apt-get install kubectl google-cloud-sdk-gke-gcloud-auth-plugin
+create a user and switch to that user
+kubernetes-engine > Clusters > select-gke-cluster > click-connect > run-cmd-to-get-config-of-bastion-node 
+if we are using a multiple gke in a single bastion node, then we have to swtich user and use config by exporting that config
+
+reference url : https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke

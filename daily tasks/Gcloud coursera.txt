@@ -1,0 +1,91 @@
+Gcloud coursera:
+
+
+week-3:
+Resources and Access in the cloud:
+    Gcloud resource hierarchy
+    Identity and Access Management:
+        There are several kinds of roles in IAM:
+            Basic roles: Roles historically available in the Google Cloud console. These roles are Owner, Editor, and Viewer.
+                Caution: Basic roles include thousands of permissions across all Google Cloud services. In production environments, do not grant basic roles unless there is no alternative. Instead, grant the most limited predefined roles or custom roles that meet your needs.
+            Predefined roles: Roles that give finer-grained access control than the basic roles. For example, the predefined role Pub/Sub Publisher (roles/pubsub.publisher) provides access to only publish messages to a Pub/Sub topic.
+            Custom roles: Roles that you create to tailor permissions to the needs of your organization when predefined roles don't meet your needs.
+        Role binding: principals ( google account,  service account ) + role ( App engine admin )
+            This model for access management has three main parts:
+                Principal. A principal can be a Google Account (for end users), a service account (for applications and compute workloads), a Google group, or a Google Workspace account or Cloud Identity domain that can access a resource. Each principal has its own identifier, which is typically an email address.
+                Role. A role is a collection of permissions. Permissions determine what operations are allowed on a resource. When you grant a role to a principal, you grant all the permissions that the role contains.
+                Policy. The allow policy is a collection of role bindings that bind one or more principals to individual roles. When you want to define who (principal) has what type of access (role) on a resource, you create an allow policy and attach it to the resource.
+    Service Accounts
+    Cloud Identity
+    Interating with Gcloud 
+    Interacting with gcloud:
+        Gcloud console
+        Cloud sdk and cloud shell
+        Api
+        Gcloud app
+    Qwik Lab : create a deployment lamp stack
+
+week-4:
+Virtual Machines and Networks in the cloud: ( Custom and Default vpc ) - A secure, individual, private cloud-computing model  hosted within a public cloud
+    Virtual Private Cloud networking :
+        It has Routing tables:
+            Routing tables are built-in
+            No router provisioning  or managing
+            Forward traffic from  one instances to another
+    Compute Engine - ( sustained-use discounts, commited-use discounts, Preemtible and spot VMs)
+        spot VMs:
+            More features
+            No maximum runtime
+            Same pricing
+        Preemtible VMs:
+            Less features
+            Runtime upto 24 hrs
+            Same pricing
+   
+    Scaling virtual:
+
+    Important VPC compatibilities:
+        Firewall:
+            No router provisioning  or managing
+            Restrict access to instances
+            Rules can be defined through network tags
+        Vpc-peering:
+            A relationship between two vpc can be establish to exchange traffic
+            To use the full power of IAM  - we can configure a shared vpc
+    Cloud Load Balancing:
+        Global HTTP(s)
+        Global SSl proxy
+        Global Tcp proxy
+        Regional
+        Regional internal
+        Internal HTTP(s) - uses proxy
+    Cloud DNS and Cloud CDN:
+        Google has highly developed DNS infrastructure  that makes 8.8.8.8 available so that everyone can take advantage of it
+        Cloud DNS:
+            Managed DNS service that runs on the same infrastructure as Google
+            Low latency, HA, and cost-effective
+            The DNS information you publishe is served from redundant locations around the world
+            Cloud DNS is programmable. You can publish and manage millions of DNS zones and record using the Google cloud console, the cli or api
+            Egde caches:
+            Cloud CDN:
+                Lower network latency 
+                Origin of content will experience reduced load
+                save money 
+                Enabled with a single checkbox
+    Connecting networks to Google VPC:
+        IPsec VPN protocol:
+            uses cloud router to make the connection dynamic
+            Lets other networks and Google VPC exchage  route information  over the  VPN using the Border Gateway protocol
+            Not always the best option  because of security concerns or bandwidth reliability 
+        Direct peering:
+            Puts a router in the same datacenter as a google point of presence(PoP)
+            Uses a router to exchange traffic between networks
+        Career Peering:
+            Gives you direct access from an on-premises network through  a service  provider's network
+            Not covered by a google service level aggrement
+        Dedicated Interconnect:
+            Allows one or more direct, private connections to google
+            Can be covered by upto 99.99% SLA
+        Partner Interconnect: 
+    Qwik Lab: 
+    
