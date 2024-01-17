@@ -1,6 +1,6 @@
 Gcloud coursera:
 
-
+2. Google Cloud Fundamentals: Core Infrastructure:
 week-3:
 Resources and Access in the cloud:
     Gcloud resource hierarchy
@@ -244,7 +244,79 @@ Applications in the cloud:
             (source code > ) write code, ( container image (using buildpacks ) > web app ) deploy to cloud run
         With cloud run you can use a container-based workflow as well as a source-based workflow
         Only have to pay while container is handling requests, startup and shutdown
+        Qwik lab:
+            Task 1. Enable the Cloud Run API and configure your Shell environment
+                gcloud services enable run.googleapis.com
+                gcloud config set compute/region us-west1
+                LOCATION="us-west1"
+            Task 2. Write the sample application:
+                mkdir helloworld && cd helloworld
+                nano package.json:
+                    {
+                    "name": "helloworld",
+                    "description": "Simple hello world sample in Node",
+                    "version": "1.0.0",
+                    "main": "index.js",
+                    "scripts": {
+                        "start": "node index.js"
+                    },
+                    "author": "Google LLC",
+                    "license": "Apache-2.0",
+                    "dependencies": {
+                        "express": "^4.17.1"
+                    }
+                    }
+                nano index.js:
+                    const express = require('express');
+                    const app = express();
+                    const port = process.env.PORT || 8080;
+
+                    app.get('/', (req, res) => {
+                    const name = process.env.NAME || 'World';
+                    res.send(`Hello ${name}!`);
+                    });
+
+                    app.listen(port, () => {
+                    console.log(`helloworld: listening on port ${port}`);
+                    });
+            Task 3. Containerize your app and upload it to Artifact Registry:
+                nano Dockerfile:
+                    # Use the official lightweight Node.js 12 image.
+                    # https://hub.docker.com/_/node
+                    FROM node:12-slim
+
+                    # Create and change to the app directory.
+                    WORKDIR /usr/src/app
+
+                    # Copy application dependency manifests to the container image.
+                    # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
+                    # Copying this first prevents re-running npm install on every code change.
+                    COPY package*.json ./
+
+                    # Install production dependencies.
+                    # If you add a package-lock.json, speed your build by switching to 'npm ci'.
+                    # RUN npm ci --only=production
+                    RUN npm install --only=production
+
+                    # Copy local code to the container image.
+                    COPY . ./
+
+                    # Run the web service on container startup.
+                    CMD [ "npm", "start" ]
+                gcloud builds submit --tag gcr.io/$GOOGLE_CLOUD_PROJECT/helloworld
+                gcloud container images list
+                gcloud auth configure-docker:
+                    y
+                docker run -d -p 8080:8080 gcr.io/$GOOGLE_CLOUD_PROJECT/helloworld
+                curl localhost:8080
+            Task 4. Deploy to Cloud Run:
+                gcloud run deploy --image gcr.io/$GOOGLE_CLOUD_PROJECT/helloworld --allow-unauthenticated --region=$LOCATION
+                On success, the command line displays the service URL
+            Task 5. Clean up:
+                gcloud container images delete gcr.io/$GOOGLE_CLOUD_PROJECT/helloworld
+                gcloud run services delete helloworld --region=us-west1 
     Development in the cloud:
+
 
     Cloud Functions:
         Lightweight, event-based, asynchronous compute solution
@@ -253,3 +325,6 @@ Applications in the cloud:
         Billed to the nearest 100 ms , and only while your code is running 
         Suports code in node, pyhton, go, java, .Net Core, Ruby, and PHP
         Events from cloud storage and Pub/Sub can trigger Cloud functions asynchronously, or use http invocation for synchronous execution
+
+3.  Architecting with Google Kubernetes Engine Specialization:
+week-1:
